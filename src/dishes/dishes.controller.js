@@ -24,6 +24,7 @@ function validateDish(req, res, next) {
     } else if (image_url === undefined || image_url === "") {
         next({ status: 400, message: "Dish must include a image_url" });
     } else {
+        res.locals.data = req.body.data;
         return next();
     }
 }
@@ -43,10 +44,9 @@ function list(req, res) {
 }
 
 function create(req, res) {
-    const { data } = req.body;
     const newDish = {
         id: nextId(),
-        ...data
+        ...res.locals.data
     };
     dishes.push(newDish);
     res.status(201).json({ data: newDish });
@@ -58,11 +58,11 @@ function read(req, res) {
 
 function update(req, res) {
     const dish = res.locals.dish;
-    const { data: { name, description, price, image_url } } = req.body;
-    dish.name = name;
-    dish.description = description;
-    dish.price = price;
-    dish.image_url = image_url;
+    const data = res.locals.data;
+    dish.name = data.name;
+    dish.description = data.description;
+    dish.price = data.price;
+    dish.image_url = data.image_url;
     res.status(200).json({ data: dish });
 }
 

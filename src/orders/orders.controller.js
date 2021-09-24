@@ -49,6 +49,7 @@ function validateOrder(req, res, next) {
             }
         }
     } else {
+        res.locals.data = req.body.data;
         return next();
     }
 }
@@ -69,11 +70,10 @@ function list(req, res) {
 }
 
 function create(req, res) {
-    const { data } = req.body;
     const newOrder = {
         id: nextId(),
         status: "pending",
-        ...data
+        ...res.locals.data
     }
     orders.push(newOrder);
     res.status(201).json({ data: newOrder });
@@ -85,11 +85,11 @@ function read(req, res) {
 
 function update(req, res) {
     const order = res.locals.order;
-    const { data: { deliverTo, mobileNumber, status, dishes } } = req.body;
-    order.deliverTo = deliverTo;
-    order.mobileNumber = mobileNumber;
-    order.status = status;
-    order.dishes = dishes;
+    const data = res.locals.data;
+    order.deliverTo = data.deliverTo;
+    order.mobileNumber = data.mobileNumber;
+    order.status = data.status;
+    order.dishes = data.dishes;
     res.status(200).json({ data: order });
 }
 
